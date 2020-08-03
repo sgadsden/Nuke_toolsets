@@ -1,0 +1,150 @@
+set cut_paste_input [stack 0]
+version 10.5 v7
+push $cut_paste_input
+Dot {
+ name Dot10
+ label "Plate\nInput"
+ note_font "Verdana Bold Bold"
+ note_font_color 0xffffffff
+ selected true
+ xpos -1170
+ ypos -1096
+}
+set N31ef30c0 [stack 0]
+Dot {
+ name Dot12
+ selected true
+ xpos -1373
+ ypos -1096
+}
+set N179296e0 [stack 0]
+OFXuk.co.thefoundry.keylight.keylight_v201 {
+ show "Final Result"
+ unPreMultiply false
+ screenColour {0 0 0}
+ screenGain 1
+ screenBalance 0.5
+ alphaBias {0.5 0.5 0.5}
+ despillBias {0.5 0.5 0.5}
+ gangBiases true
+ preBlur 0
+ "Screen Matte" 0
+ screenClipMin 0
+ screenClipMax 1
+ screenClipRollback 0
+ screenGrowShrink 0
+ screenSoftness 0
+ screenDespotBlack 0
+ screenDespotWhite 0
+ screenReplaceMethod "Soft Colour"
+ screenReplaceColour {0.5 0.5 0.5}
+ Tuning 0
+ midPoint 0.5
+ lowGain 1
+ midGain 1
+ highGain 1
+ "Inside Mask" 0
+ sourceAlphaHandling Ignore
+ insideReplaceMethod "Soft Colour"
+ insideReplaceColour {0.5 0.5 0.5}
+ Crops 0
+ SourceXMethod Colour
+ SourceYMethod Colour
+ SourceEdgeColour 0
+ SourceCropL 0
+ SourceCropR 1
+ SourceCropB 0
+ SourceCropT 1
+ balanceSet false
+ insideComponent None
+ outsideComponent None
+ cacheBreaker true
+ name _TEMP_KEY_
+ selected true
+ xpos -1404
+ ypos -999
+}
+Invert {
+ channels alpha
+ name _INVERT_
+ selected true
+ xpos -1404
+ ypos -953
+}
+Erode {
+ size 48
+ name _ERODE_
+ selected true
+ xpos -1404
+ ypos -903
+}
+Blur {
+ size 18
+ name _BLUR_
+ selected true
+ xpos -1404
+ ypos -853
+}
+Dot {
+ name Dot13
+ selected true
+ xpos -1373
+ ypos -699
+}
+set N1765cec0 [stack 0]
+Dot {
+ name Dot4
+ selected true
+ xpos -1373
+ ypos -572
+}
+push $N179296e0
+Dot {
+ name Dot9
+ selected true
+ xpos -1470
+ ypos -1096
+}
+Dot {
+ name Dot11
+ selected true
+ xpos -1470
+ ypos -433
+}
+push $N1765cec0
+push $N31ef30c0
+Copy {
+ inputs 2
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name _COPY_ALPHA_
+ selected true
+ xpos -1204
+ ypos -703
+}
+Premult {
+ name _PREMULT_
+ selected true
+ xpos -1204
+ ypos -649
+}
+Blur {
+ size 300
+ name _EXTEND_
+ selected true
+ xpos -1204
+ ypos -613
+}
+Unpremult {
+ name _UNPREMULT_
+ selected true
+ xpos -1204
+ ypos -549
+}
+Keymix {
+ inputs 3
+ name _ORIG_ON_TOP_
+ selected true
+ xpos -1204
+ ypos -437
+}
