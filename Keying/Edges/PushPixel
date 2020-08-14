@@ -1,0 +1,497 @@
+#! /opt/thefoundry/nuke/Nuke11.1v4/libnuke-11.1.4.so -nx
+version 11.1 v4
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="28" w="2560" h="1339" maximized="1" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1897" stretch="1"/>
+            <splitter orientation="2">
+                <split size="758"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="533"/>
+                <dock id="" activePageId="DAG.1">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /home/sgadsden/Downloads/PushPixel.nk
+ frame 1001
+ first_frame 1001
+ last_frame 1024
+ lock_range true
+ fps 23.976
+ format "3840 2160 0 0 3840 2160 1 oa_3840x2160"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement OCIO
+ OCIO_config custom
+ customOCIOConfigPath /Volumes/af/show/oa/assets/lut/ocio_config/publish/main/lut/v009/bundle/config.ocio
+ defaultViewerLUT "OCIO LUTs"
+ workingSpaceLUT linear
+ monitorLut Neutral
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut REDLog3G10
+ floatLut linear
+ free_type_font_path /Volumes/af/tools/common/nuke/slate/font/
+ free_type_system_fonts false
+ addUserKnob {20 mariTab l Mari}
+ addUserKnob {26 cmdStatus l "listen status" t "The status of Nuke's command port" T <b>Disabled</b>}
+ addUserKnob {26 sendStatus l "send status" t "The status of Nuke's connection to Mari" T <b>Inactive</b>}
+ addUserKnob {3 socketPort l "nuke command port" t "Port to listen on. Make sure this matches the command port set in Mari's \"Nuke\" Palette."}
+ socketPort 50107
+ addUserKnob {6 enableSocket l enabled -STARTLINE}
+ addUserKnob {26 divider l "" +STARTLINE}
+ addUserKnob {20 advanced n 1}
+ advanced 0
+ addUserKnob {3 portRange l "port range" t "If the main specified command port is unavailable, Nuke will try using the next port number, and continue until successful or the indicated number of ports have been tried."}
+ portRange 200
+ addUserKnob {4 enablePortRange l "" t "Indicates whether to use a range of ports up to the given number, or to use only the single one specified." -STARTLINE M {"use range" "single port only"}}
+ addUserKnob {6 localhostOnly l "local host only" t "This determines whether the Mari bridge server will listen for connections from any machine, or from \"localhost\" (the local machine) only.<p>Only allowing connections from localhost is more secure, but will prevent you from using the Nuke&lt;&gt;Mari workflow across the network." +STARTLINE}
+ addUserKnob {1 hostName l "mari host" t "The machine name or IP address that Mari is running on.\nLeave empty if both Mari and Nuke are running on the same machine."}
+ hostName localhost
+ addUserKnob {3 socketPortSend l port t "Port that Mari is listening to. Make sure this matches the command port set in Mari's preferences." -STARTLINE}
+ socketPortSend 6100
+ addUserKnob {2 mariDataDir l "mari data dir" t "Path to directory that will hold transient data to be sent to Mari (exrs, objs and fbx files). If this is left empty, a \"mari\" directory will be created in the nk file's location"}
+ mariDataDir "\[getenv NUKE_TEMP_DIR]/mariData"
+ addUserKnob {2 mariLocation l "mari launch path" t "The path to launch Mari from.<br>This can also be set using the <b>MARI_INSTALL_PATH</b> environment variable."}
+ mariLocation /opt/thefoundry/mari/mari3.3v1EXT4/mari
+ addUserKnob {20 endGroup n -1}
+}
+Viewer {
+ inputs 0
+ frame 1001
+ frame_range 1001-1024
+ fps 23.97602463
+ name Viewer1
+ xpos -40
+ ypos -9
+}
+Group {
+ inputs 0
+ name PushPixel
+ help "Push or Pull RGB pixels using the Alpha channel as mask.\n\nFor\na best result you can combine several PushPixels.\n\n(beta version)"
+ tile_color 0xff3402ff
+ note_font "Verdana Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold Bold"
+ note_font_size 15
+ selected true
+ xpos -21
+ ypos -138
+ mapsize {0.15 0.15}
+ addUserKnob {20 menu l Push-Pull}
+ addUserKnob {4 push_pull l mode t "Push to extend\nPull to contract" M {Push Pull ""}}
+ addUserKnob {41 uv_scale l size t "The intensity of the extend" T IDistort1.uv_scale}
+ addUserKnob {16 edge_size t "The size of the edge to extend" R 0 3}
+ edge_size 1
+ addUserKnob {41 size l "soft select" t "The softness of the extend" T Blur1.size}
+ addUserKnob {41 size_1 l erode t "Use this to erode the alpha to adjust the edge to push/pull" T FilterErode1.size}
+ addUserKnob {6 useRGBa l "use input alpha" t "Uses the alpha from the RGB input" +STARTLINE}
+ useRGBa true
+ addUserKnob {6 premult l "RGB only" t "Check this to keep the original alpha from the RGB input. Otherwise it will output the extended alpha." +STARTLINE}
+ premult true
+ addUserKnob {26 ""}
+ addUserKnob {26 mask_ctrl l Mask T "  "}
+ addUserKnob {41 Mask_mix l mask_mix t "The intensity of the mask" T Keymix1.mix}
+ addUserKnob {41 global_mix t "Global intensity" T Dissolve1.which}
+ addUserKnob {22 toggle_mask l "Toggle Mask" t "To add or remove a Mask input" T "# Toggle Mask Input\nfrom __future__ import with_statement\nn = nuke.thisNode()\n# Disconnect Mask Input\nn.setInput(1, None)\nwith n:\n  mask_input = nuke.toNode('InputMask')\n  if mask_input:\n    nuke.delete(mask_input)\n  else:\n    mask_input = nuke.nodes.Input()\n    mask_input\['name'].setValue('InputMask')\n    mask_input.setXYpos(-1357,253)\n    mdot = nuke.toNode('mask_dot')\n    mdot.setInput(0, mask_input)" +STARTLINE}
+}
+ Constant {
+  inputs 0
+  channels rgb
+  color 0.5
+  name Constant1
+  label "Root Format:\n\[value format]"
+  xpos -737
+  ypos 485
+ }
+set N56a7a50 [stack 0]
+ Dot {
+  name Dot9
+  xpos -535
+  ypos 518
+ }
+ Transform {
+  translate {{parent.edge_size} {parent.edge_size}}
+  center {960 540}
+  name Trans_value1
+  xpos -563
+  ypos 571
+ }
+ Input {
+  inputs 0
+  name InputRGB
+  xpos -867
+  ypos -15
+ }
+ Dot {
+  name Dot3
+  xpos -839
+  ypos 88
+ }
+set N57948f0 [stack 0]
+ Dot {
+  name Dot5
+  xpos -839
+  ypos 880
+ }
+set N5799190 [stack 0]
+ Dot {
+  name Dot15
+  xpos -973
+  ypos 880
+ }
+set N579da80 [stack 0]
+ Dot {
+  name Dot11
+  xpos -973
+  ypos 1831
+ }
+push $N579da80
+ Dot {
+  name Dot4
+  xpos -1438
+  ypos 880
+ }
+ Dot {
+  name Dot6
+  xpos -1438
+  ypos 1716
+ }
+ Input {
+  inputs 0
+  name InputMask
+  xpos -1357
+  ypos 253
+  number 2
+ }
+ Dot {
+  name mask_dot
+  label "Mask Input"
+  note_font_size 18
+  note_font_color 0x7f7f7f01
+  xpos -1555
+  ypos 177
+ }
+ Invert {
+  channels alpha
+  name Invert1
+  xpos -1583
+  ypos 553
+ }
+push $N5799190
+ Dot {
+  name Dot7
+  xpos -839
+  ypos 1040
+ }
+set N596d8a0 [stack 0]
+ Dot {
+  name Dot10
+  xpos -1175
+  ypos 1040
+ }
+set N5972110 [stack 0]
+ Shuffle {
+  red black
+  green black
+  blue black
+  alpha black
+  name _WHITE_
+  tile_color 0xfefefeff
+  xpos -1363
+  ypos 1042
+ }
+ Copy {
+  inputs 2
+  from0 -rgba.alpha
+  to0 -rgba.alpha
+  channels all
+  bbox B
+  name Copy4
+  xpos -1583
+  ypos 1030
+ }
+ Dot {
+  name Dot13
+  xpos -1555
+  ypos 1472
+ }
+set N59952b0 [stack 0]
+push $N5972110
+ Dot {
+  name Dot12
+  xpos -1175
+  ypos 1404
+ }
+set N5999a00 [stack 0]
+push $N57948f0
+ Input {
+  inputs 0
+  name InputAlpha
+  xpos -455
+  ypos -8
+  number 1
+ }
+ Switch {
+  inputs 2
+  which {{parent.useRGBa}}
+  name Switch1
+  xpos -455
+  ypos 90
+ }
+ Clamp {
+  channels alpha
+  name Clamp1
+  xpos -455
+  ypos 241
+ }
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name a_to_rgb
+  xpos -455
+  ypos 320
+ }
+ FilterErode {
+  channels rgba
+  size 0
+  name FilterErode1
+  xpos -455
+  ypos 371
+ }
+ Dot {
+  name Dot1
+  xpos -427
+  ypos 624
+ }
+set N59d60b0 [stack 0]
+ ColorCorrect {
+  gain 0.5
+  name ColorCorrect1
+  xpos -323
+  ypos 921
+ }
+push $N59d60b0
+ Transform {
+  translate {{(parent.Trans_value1.translate.x)*(-1)} 0}
+  center {960 540}
+  name Transform1
+  xpos -329
+  ypos 810
+ }
+ ColorCorrect {
+  gain 0
+  name ColorCorrect6
+  xpos -329
+  ypos 843
+ }
+push $N59d60b0
+ Transform {
+  translate {{parent.Trans_value1.translate.x} 0}
+  center {960 540}
+  name Transform6
+  xpos -331
+  ypos 761
+ }
+push $N56a7a50
+ Dot {
+  name Dot2
+  xpos -709
+  ypos 643
+ }
+set N5a28580 [stack 0]
+ Merge2 {
+  inputs 2
+  name Merge1
+  xpos -433
+  ypos 761
+ }
+ Merge2 {
+  inputs 2
+  name Merge8
+  xpos -433
+  ypos 843
+ }
+ Merge2 {
+  inputs 2
+  name Merge9
+  xpos -433
+  ypos 921
+ }
+push $N59d60b0
+ ColorCorrect {
+  gain 0.5
+  name ColorCorrect7
+  xpos -607
+  ypos 919
+ }
+push $N59d60b0
+ Transform {
+  translate {0 {parent.Trans_value1.translate.y*-1}}
+  center {960 540}
+  name Transform7
+  xpos -609
+  ypos 806
+ }
+ ColorCorrect {
+  gain 0
+  name ColorCorrect8
+  xpos -609
+  ypos 840
+ }
+push $N59d60b0
+ Transform {
+  translate {0 {parent.Trans_value1.translate.y}}
+  center {960 540}
+  name Transform8
+  xpos -609
+  ypos 758
+ }
+push $N5a28580
+ Merge2 {
+  inputs 2
+  name Merge10
+  xpos -737
+  ypos 758
+ }
+ Merge2 {
+  inputs 2
+  name Merge11
+  xpos -737
+  ypos 840
+ }
+ Merge2 {
+  inputs 2
+  name Merge12
+  xpos -737
+  ypos 919
+ }
+ ShuffleCopy {
+  inputs 2
+  red red
+  blue black
+  alpha white
+  name ShuffleCopy1
+  xpos -551
+  ypos 1006
+ }
+set N5ad9690 [stack 0]
+ Blur {
+  size 4
+  name Blur1
+  xpos -551
+  ypos 1051
+ }
+ Dot {
+  name Dot8
+  xpos -523
+  ypos 1144
+ }
+set N5af6a40 [stack 0]
+push $N5af6a40
+ Invert {
+  name Invert2
+  xpos -431
+  ypos 1194
+ }
+ Switch {
+  inputs 2
+  which {{push_pull i}}
+  name Switch2
+  label "0=Push\n1=Pull"
+  xpos -551
+  ypos 1244
+ }
+push $N596d8a0
+add_layer {push push.x push.y}
+ Copy {
+  inputs 2
+  from0 rgba.red
+  to0 push.x
+  from1 rgba.green
+  to1 push.y
+  name Copy1
+  xpos -867
+  ypos 1244
+ }
+ IDistort {
+  uv push
+  uv_offset 0.5
+  uv_scale {30 10}
+  blur_scale 0
+  name IDistort1
+  xpos -866
+  ypos 1347
+ }
+ Keymix {
+  inputs 3
+  channels rgba
+  name Keymix1
+  xpos -866
+  ypos 1474
+ }
+push $N5999a00
+ Dot {
+  name Dot14
+  xpos -1175
+  ypos 1568
+ }
+ Dissolve {
+  inputs 2
+  channels rgba
+  which 1
+  name Dissolve1
+  xpos -866
+  ypos 1570
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 rgba.alpha
+  name Copy3
+  xpos -866
+  ypos 1712
+  disable {{parent.premult==0}}
+ }
+ CopyBBox {
+  inputs 2
+  name CopyBBox1
+  xpos -866
+  ypos 1834
+ }
+ Output {
+  name Output1
+  xpos -866
+  ypos 1947
+ }
+push $N5ad9690
+push $N59952b0
+ Viewer {
+  inputs 2
+  frame_range 1014-1065
+  fps 23.97602463
+  input_process false
+  name Viewer1
+  xpos -277
+  ypos 1561
+ }
+end_group
